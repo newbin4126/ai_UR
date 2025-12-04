@@ -1,7 +1,10 @@
 import { GoogleGenAI } from "@google/genai";
 
 const getClient = () => {
+  // According to coding guidelines, the API key must be obtained exclusively from process.env.API_KEY
+  // This also fixes the TS error regarding import.meta.env
   const apiKey = process.env.API_KEY;
+  
   if (!apiKey) {
     console.warn("API_KEY not found in environment.");
     return null;
