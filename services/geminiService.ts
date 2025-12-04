@@ -15,7 +15,7 @@ export const generateExplanation = async (
   stats: string
 ): Promise<string> => {
   const ai = getClient();
-  if (!ai) return "AI Explanations are unavailable (Missing API Key).";
+  if (!ai) return "AI 설명을 사용할 수 없습니다 (API 키 누락).";
 
   try {
     const prompt = `
@@ -26,7 +26,7 @@ export const generateExplanation = async (
       Feature Variable: "${feature}"
       Statistical Context: ${stats}
 
-      Please explain in simple, plain English (for a non-expert) what the relationship between "${feature}" and "${target}" might indicate in a medical context. 
+      Please explain in simple, plain Korean (for a non-expert) what the relationship between "${feature}" and "${target}" might indicate in a medical context. 
       Use an analogy if helpful. Keep it under 3 sentences.
       Do not use jargon.
     `;
@@ -36,9 +36,9 @@ export const generateExplanation = async (
       contents: prompt,
     });
 
-    return response.text || "No explanation generated.";
+    return response.text || "설명이 생성되지 않았습니다.";
   } catch (error) {
     console.error("Gemini API Error:", error);
-    return "Could not generate explanation at this time.";
+    return "지금은 설명을 생성할 수 없습니다.";
   }
 };

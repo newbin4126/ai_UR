@@ -58,7 +58,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
   const prediction: PredictionResult = {
     accuracy: 0.94,
     auc: 0.98,
-    modelName: 'Random Forest Classifier (Simulated)'
+    modelName: '랜덤 포레스트 분류기 (가상)'
   };
 
   return (
@@ -66,10 +66,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
       {/* Top Bar: Controls */}
       <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <label className="text-sm font-medium text-slate-500">Analyzing Relationship:</label>
+          <label className="text-sm font-medium text-slate-500">분석 관계:</label>
           <div className="flex items-center gap-2">
             <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md font-semibold text-sm">{target}</span>
-            <span className="text-slate-400">vs</span>
+            <span className="text-slate-400">대</span>
             <select 
               value={activeFeature}
               onChange={(e) => setActiveFeature(e.target.value)}
@@ -81,7 +81,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
         </div>
         
         <div className="flex items-center gap-2">
-           <span className="text-sm text-slate-500">Enable AI Assistant</span>
+           <span className="text-sm text-slate-500">AI 어시스턴트 활성화</span>
            <button 
              onClick={() => setShowExplanation(!showExplanation)}
              className={`w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out ${showExplanation ? 'bg-blue-600' : 'bg-slate-300'}`}
@@ -97,10 +97,10 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
             {/* Prediction Card */}
             <div className="bg-slate-850 text-white rounded-xl shadow-lg p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-                <h3 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-1">Model Performance</h3>
+                <h3 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-1">모델 성능</h3>
                 <div className="flex items-end gap-2 mb-4">
                     <span className="text-4xl font-bold">{(prediction.accuracy * 100).toFixed(1)}%</span>
-                    <span className="text-sm text-blue-400 mb-1">Accuracy</span>
+                    <span className="text-sm text-blue-400 mb-1">정확도 (Accuracy)</span>
                 </div>
                 <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
                     <div className="bg-blue-500 h-full" style={{ width: `${prediction.accuracy * 100}%` }}></div>
@@ -114,23 +114,23 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
             {/* Feature Stats */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
                  <h3 className="font-semibold text-slate-900 mb-4 flex justify-between">
-                    <span>Data Quality: {activeFeature}</span>
-                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{featureStats.type}</span>
+                    <span>데이터 품질: {activeFeature}</span>
+                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{featureStats.type === 'numeric' ? '수치형' : '범주형'}</span>
                  </h3>
                  <div className="space-y-4 text-sm">
                     <div className="flex justify-between py-2 border-b border-slate-50">
-                        <span className="text-slate-500">Missing Values</span>
+                        <span className="text-slate-500">결측치</span>
                         <span className={`font-medium ${featureStats.missingCount > 0 ? 'text-red-500' : 'text-slate-700'}`}>
                             {featureStats.missingCount} ({((featureStats.missingCount / meta.rowCount) * 100).toFixed(1)}%)
                         </span>
                     </div>
                     <div className="flex justify-between py-2 border-b border-slate-50">
-                        <span className="text-slate-500">Unique Values</span>
+                        <span className="text-slate-500">고유값 개수</span>
                         <span className="font-medium text-slate-700">{featureStats.uniqueCount}</span>
                     </div>
                     {featureStats.mean && (
                          <div className="flex justify-between py-2 border-b border-slate-50">
-                            <span className="text-slate-500">Mean</span>
+                            <span className="text-slate-500">평균 (Mean)</span>
                             <span className="font-medium text-slate-700">{featureStats.mean.toFixed(4)}</span>
                         </div>
                     )}
@@ -144,7 +144,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                         <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
-                        <h3 className="font-bold text-blue-900">Expert Insight</h3>
+                        <h3 className="font-bold text-blue-900">전문가 인사이트</h3>
                      </div>
                      <div className="text-sm text-blue-800 leading-relaxed">
                         {loadingExplanation ? (
@@ -168,7 +168,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
         <div className="lg:col-span-2 space-y-8">
             {/* Distribution Plot */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                <h4 className="text-lg font-semibold text-slate-800 mb-6">Distribution of {activeFeature}</h4>
+                <h4 className="text-lg font-semibold text-slate-800 mb-6">{activeFeature}의 분포</h4>
                 <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={histogramData}>
@@ -184,7 +184,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
-                <p className="text-xs text-slate-400 mt-4 text-center">Shows how frequently different values of {activeFeature} occur in the dataset.</p>
+                <p className="text-xs text-slate-400 mt-4 text-center">데이터셋에서 {activeFeature} 값의 빈도를 보여줍니다.</p>
             </div>
 
             {/* Relationship Plot */}
@@ -210,14 +210,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                             <Tooltip cursor={{ strokeDasharray: '3 3' }} 
                                 contentStyle={{backgroundColor: '#fff', border: '1px solid #e2e8f0', borderRadius: '8px', color: '#1e293b'}}
                             />
-                            <Scatter name="Values" data={relationshipData} fill="#2563eb" fillOpacity={0.6} />
+                            <Scatter name="값" data={relationshipData} fill="#2563eb" fillOpacity={0.6} />
                         </ScatterChart>
                     </ResponsiveContainer>
                 </div>
                 <p className="text-xs text-slate-400 mt-4 text-center">
                     {targetStats.type === 'categorical' 
-                        ? `Visualizing the spread of ${activeFeature} across different ${target} categories.`
-                        : `Correlation plot between ${target} and ${activeFeature}.`}
+                        ? `${activeFeature}가 다양한 ${target} 범주에 어떻게 분포하는지 시각화합니다.`
+                        : `${target}와 ${activeFeature} 간의 상관관계 플롯입니다.`}
                 </p>
             </div>
         </div>

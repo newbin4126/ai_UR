@@ -16,8 +16,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             <span className="font-semibold text-lg tracking-tight text-slate-800">UR</span>
           </div>
           <nav className="flex gap-6 text-sm font-medium text-slate-500">
-            <span className="hover:text-blue-600 cursor-pointer transition-colors">Documentation</span>
-            <span className="hover:text-blue-600 cursor-pointer transition-colors">Support</span>
+            <span className="hover:text-blue-600 cursor-pointer transition-colors">문서</span>
+            <span className="hover:text-blue-600 cursor-pointer transition-colors">지원</span>
           </nav>
         </div>
       </header>
@@ -26,7 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <footer className="bg-slate-900 text-slate-400 py-12 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} UR Analytics. Secure & Client-side processing.</p>
+          <p>&copy; {new Date().getFullYear()} UR Analytics. 안전한 클라이언트 측 데이터 처리.</p>
         </div>
       </footer>
     </div>

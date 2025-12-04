@@ -55,8 +55,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileLoaded }) => {
   return (
     <div className="max-w-xl mx-auto mt-10">
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-slate-900 mb-2">Upload Data</h2>
-        <p className="text-slate-500">Upload your CSV or Excel file to begin analysis.</p>
+        <h2 className="text-3xl font-bold text-slate-900 mb-2">데이터 업로드</h2>
+        <p className="text-slate-500">분석을 시작하려면 CSV 또는 Excel 파일을 업로드하세요.</p>
       </div>
 
       <div
@@ -80,7 +80,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileLoaded }) => {
         {loading ? (
           <div className="flex flex-col items-center justify-center space-y-4">
              <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-             <p className="text-blue-600 font-medium">Processing Dataset...</p>
+             <p className="text-blue-600 font-medium">데이터셋 처리 중...</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -90,11 +90,11 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileLoaded }) => {
               </svg>
             </div>
             <div>
-              <p className="text-lg font-medium text-slate-700">Drag & drop your file here</p>
-              <p className="text-sm text-slate-500 mt-1">or click to browse from your computer</p>
+              <p className="text-lg font-medium text-slate-700">파일을 여기에 드래그 앤 드롭하세요</p>
+              <p className="text-sm text-slate-500 mt-1">또는 클릭하여 컴퓨터에서 파일 선택</p>
             </div>
             <div className="pt-4">
-              <span className="px-3 py-1 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">Supported: CSV, Excel (.xlsx, .xls)</span>
+              <span className="px-3 py-1 bg-slate-100 text-slate-500 text-xs font-semibold rounded-full">지원 형식: CSV, Excel (.xlsx, .xls)</span>
             </div>
           </div>
         )}
@@ -119,7 +119,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({ onFileLoaded }) => {
           }}
           className="text-sm text-blue-600 hover:text-blue-800 underline underline-offset-2"
         >
-          Load Demo Breast Cancer Dataset
+          유방암 데모 데이터셋 불러오기
         </button>
       </div>
     </div>

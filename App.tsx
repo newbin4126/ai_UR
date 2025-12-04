@@ -26,11 +26,11 @@ function App() {
         setMeta(metadata);
         setStep(AppStep.SELECT_VARS);
       } else {
-        alert("Could not parse file. Please check the file format.");
+        alert("파일을 분석할 수 없습니다. 파일 형식을 확인해주세요.");
       }
     } catch (e) {
       console.error(e);
-      alert("Error parsing file. Please ensure it is a valid CSV or Excel file.");
+      alert("파일 분석 오류. 올바른 CSV 또는 Excel 파일인지 확인해주세요.");
     }
   };
 
@@ -56,9 +56,9 @@ function App() {
                 (step === AppStep.SELECT_VARS && idx === 0) ||
                 (step === AppStep.DASHBOARD && idx < 2);
               
-              let label = "Upload";
-              if (s === AppStep.SELECT_VARS) label = "Select Variables";
-              if (s === AppStep.DASHBOARD) label = "Analysis";
+              let label = "업로드";
+              if (s === AppStep.SELECT_VARS) label = "변수 선택";
+              if (s === AppStep.DASHBOARD) label = "분석";
 
               return (
                 <div key={s} className="flex flex-col items-center bg-slate-50 px-2">

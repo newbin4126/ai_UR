@@ -29,8 +29,8 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-slate-900">Configure Analysis</h2>
-        <p className="text-slate-500">Select the variable you want to predict (Target) and the factors impacting it (Features).</p>
+        <h2 className="text-2xl font-bold text-slate-900">분석 설정</h2>
+        <p className="text-slate-500">예측하려는 변수(타겟)와 이에 영향을 미치는 요인(특징)을 선택하세요.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -39,9 +39,9 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
           <div className="p-4 bg-blue-50 border-b border-blue-100">
             <h3 className="font-semibold text-blue-900 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-blue-200 text-blue-700 flex items-center justify-center text-xs">1</span>
-              Select Target Variable
+              타겟 변수 선택
             </h3>
-            <p className="text-xs text-blue-600 mt-1">The outcome you want to analyze (e.g., Diagnosis)</p>
+            <p className="text-xs text-blue-600 mt-1">분석하려는 결과 (예: 진단명)</p>
           </div>
           <div className="overflow-y-auto flex-1 p-2 space-y-1">
             {columns.map(col => (
@@ -60,9 +60,9 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
                 <div className="ml-3 flex-1">
                   <div className="text-sm font-medium text-slate-700">{col}</div>
                   <div className="text-xs text-slate-500 flex gap-2 mt-0.5">
-                    <span className="uppercase tracking-wider">{stats[col].type}</span>
+                    <span className="uppercase tracking-wider">{stats[col].type === 'numeric' ? '수치형' : '범주형'}</span>
                     <span>•</span>
-                    <span>{stats[col].uniqueCount} unique</span>
+                    <span>{stats[col].uniqueCount}개 고유값</span>
                   </div>
                 </div>
               </label>
@@ -75,9 +75,9 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
            <div className="p-4 bg-slate-50 border-b border-slate-200">
             <h3 className="font-semibold text-slate-900 flex items-center gap-2">
               <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-700 flex items-center justify-center text-xs">2</span>
-              Select Features
+              특징 변수 선택
             </h3>
-            <p className="text-xs text-slate-500 mt-1">Variables that might influence the target</p>
+            <p className="text-xs text-slate-500 mt-1">타겟에 영향을 줄 수 있는 변수들</p>
           </div>
           <div className="overflow-y-auto flex-1 p-2 space-y-1">
             {columns.map(col => {
@@ -96,9 +96,9 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
                     className="w-4 h-4 text-slate-600 rounded border-slate-300 focus:ring-slate-500"
                   />
                   <div className="ml-3 flex-1">
-                    <div className="text-sm font-medium text-slate-700">{col} {isTarget && '(Target)'}</div>
+                    <div className="text-sm font-medium text-slate-700">{col} {isTarget && '(타겟)'}</div>
                      <div className="text-xs text-slate-500 flex gap-2 mt-0.5">
-                        <span className="uppercase tracking-wider">{stats[col].type}</span>
+                        <span className="uppercase tracking-wider">{stats[col].type === 'numeric' ? '수치형' : '범주형'}</span>
                     </div>
                   </div>
                 </label>
@@ -119,7 +119,7 @@ export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, sta
               : 'bg-slate-200 text-slate-400 cursor-not-allowed'}
           `}
         >
-          Generate Analysis Dashboard
+          분석 대시보드 생성
         </button>
       </div>
     </div>
