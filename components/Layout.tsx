@@ -33,8 +33,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             className="text-slate-400 hover:text-red-600 transition-colors transform hover:scale-110 duration-200"
             aria-label="YouTube 영상 보기"
           >
-            <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-              <path fillRule="evenodd" d="M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.746 22 12 22 12s0 3.255-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.56.419-7.814.419-7.814.419s-6.255 0-7.814-.419a2.505 2.505 0 0 1-1.768-1.768C3.537 15.255 3.532 12 3.532 12s.004-3.255.42-4.814a2.507 2.507 0 0 1 1.768-1.767C7.299 5.005 13.554 5.005 13.554 5.005s6.255 0 7.814.413H19.812zM9.544 15.568V8.432L15.818 12l-6.274 3.568z" clipRule="evenodd" />
+            <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
             </svg>
           </a>
           <p className="text-sm">&copy; {new Date().getFullYear()} UR Analytics. team DBDB. AI - final assignment</p>
