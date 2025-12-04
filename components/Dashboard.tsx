@@ -5,7 +5,7 @@ import { createHistogramData, runModelAnalysis } from '../services/dataService';
 import { generateExplanation } from '../services/geminiService';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  ScatterChart, Scatter, ZAxis
+  ScatterChart, Scatter, ZAxis, Cell
 } from 'recharts';
 
 interface DashboardProps {
@@ -67,6 +67,18 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
 
   // Prepare chart data
   const histogramData = createHistogramData(data, activeFeature);
+  const maxCount = Math.max(...histogramData.map(d => d.count));
+  
+  // Custom label renderer for BarChart
+  const renderCustomBarLabel = (props: any) => {
+    const { x, y, width, value } = props;
+    if (value !== maxCount) return null;
+    return (
+      <text x={x + width / 2} y={y - 5} fill="#1e40af" textAnchor="middle" fontSize={12} fontWeight="bold">
+        {value}
+      </text>
+    );
+  };
   
   // Prepare Relationship Data
   const relationshipData = data.map((row, i) => ({
@@ -224,7 +236,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                 <h4 className="text-lg font-semibold text-slate-800 mb-6">{activeFeature}의 분포</h4>
                 <div className="h-64">
                     <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={histogramData}>
+                        <BarChart data={histogramData} margin={{ top: 20, right: 0, bottom: 0, left: 0 }}>
                             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                             <XAxis dataKey="bin" tick={{fontSize: 12, fill: '#64748b'}} />
                             <YAxis tick={{fontSize: 12, fill: '#64748b'}} />
@@ -233,7 +245,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                                 itemStyle={{color: '#fff'}}
                                 cursor={{fill: '#f1f5f9'}}
                             />
-                            <Bar dataKey="count" name="빈도수" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                            <Bar 
+                                dataKey="count" 
+                                name="빈도수" 
+                                radius={[4, 4, 0, 0]}
+                                label={renderCustomBarLabel}
+                            >
+                                {histogramData.map((entry, index) => (
+                                    <Cell 
+                                        key={`cell-${index}`} 
+                                        fill={entry.count === maxCount ? '#1e40af' : '#60a5fa'} 
+                                    />
+                                ))}
+                            </Bar>
                         </BarChart>
                     </ResponsiveContainer>
                 </div>
