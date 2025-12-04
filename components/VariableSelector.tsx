@@ -1,15 +1,24 @@
+
 import React, { useState } from 'react';
 import { ColumnStats } from '../types';
 
 interface VariableSelectorProps {
   columns: string[];
   stats: Record<string, ColumnStats>;
+  initialTarget?: string | null;
+  initialFeatures?: string[];
   onConfirm: (target: string, features: string[]) => void;
 }
 
-export const VariableSelector: React.FC<VariableSelectorProps> = ({ columns, stats, onConfirm }) => {
-  const [target, setTarget] = useState<string | null>(null);
-  const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+export const VariableSelector: React.FC<VariableSelectorProps> = ({ 
+  columns, 
+  stats, 
+  initialTarget,
+  initialFeatures,
+  onConfirm 
+}) => {
+  const [target, setTarget] = useState<string | null>(initialTarget || null);
+  const [selectedFeatures, setSelectedFeatures] = useState<string[]>(initialFeatures || []);
 
   const handleFeatureToggle = (col: string) => {
     if (col === target) return; // Can't select target as feature

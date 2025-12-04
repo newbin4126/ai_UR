@@ -1,3 +1,4 @@
+
 export interface DataRow {
   [key: string]: string | number | null;
 }
@@ -30,6 +31,7 @@ export interface PredictionResult {
   accuracy: number;
   auc: number;
   modelName: string;
+  type?: 'classification' | 'regression'; // Added to distinguish model types
 }
 
 export interface BinData {

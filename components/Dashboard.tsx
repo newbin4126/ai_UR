@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { DataRow, DatasetMeta, PredictionResult } from '../types';
-import { createHistogramData } from '../services/dataService';
+import { createHistogramData, runModelAnalysis } from '../services/dataService';
 import { generateExplanation } from '../services/geminiService';
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
@@ -12,19 +13,41 @@ interface DashboardProps {
   meta: DatasetMeta;
   target: string;
   features: string[];
+  onReset: () => void;
 }
 
-export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, features }) => {
-  const [activeFeature, setActiveFeature] = useState<string>(features[0]);
+export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, features, onReset }) => {
+  // Initialize with the first selected feature, or fallback to the first available column if needed
+  const [activeFeature, setActiveFeature] = useState<string>(features[0] || meta.columns.filter(c => c !== target)[0]);
   const [explanation, setExplanation] = useState<string | null>(null);
   const [loadingExplanation, setLoadingExplanation] = useState(false);
   const [showExplanation, setShowExplanation] = useState(true);
+  const [showQualityTooltip, setShowQualityTooltip] = useState(false);
+  
+  // Real-time prediction state
+  const [prediction, setPrediction] = useState<PredictionResult>({
+    accuracy: 0,
+    auc: 0,
+    modelName: '모델 학습 중...',
+    type: 'classification'
+  });
 
   const targetStats = meta.stats[target];
   const featureStats = meta.stats[activeFeature];
+  
+  // Get all potential features (all columns except target) for visualization
+  const allFeatures = meta.columns.filter(c => c !== target);
+
+  // Run calculation when target or features (model inputs) change
+  useEffect(() => {
+    const result = runModelAnalysis(data, target, features);
+    setPrediction(result);
+  }, [data, target, features]);
 
   // Fetch explanation when active feature changes
   useEffect(() => {
+    if (!activeFeature || !featureStats) return;
+    
     let isMounted = true;
     const fetchExplanation = async () => {
       if (!showExplanation) return;
@@ -40,26 +63,19 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
     };
     fetchExplanation();
     return () => { isMounted = false; };
-  }, [activeFeature, target, showExplanation, targetStats, featureStats]); // Correct dependency array
+  }, [activeFeature, target, showExplanation, targetStats, featureStats]);
 
   // Prepare chart data
   const histogramData = createHistogramData(data, activeFeature);
   
   // Prepare Relationship Data
-  // If target is categorical and feature is numeric -> Box plot approximation (scatter with category on X)
-  // If both numeric -> Scatter plot
   const relationshipData = data.map((row, i) => ({
     x: targetStats.type === 'categorical' ? row[target] : row[activeFeature],
     y: targetStats.type === 'categorical' ? row[activeFeature] : row[target],
     z: 1, // Size
   })).slice(0, 300); // Limit points for performance
 
-  // Mock Prediction Model
-  const prediction: PredictionResult = {
-    accuracy: 0.94,
-    auc: 0.98,
-    modelName: '랜덤 포레스트 분류기 (가상)'
-  };
+  const isRegression = prediction.type === 'regression';
 
   return (
     <div className="space-y-8 animate-fade-in">
@@ -73,15 +89,28 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
             <select 
               value={activeFeature}
               onChange={(e) => setActiveFeature(e.target.value)}
-              className="px-3 py-1 border border-slate-300 rounded-md text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none"
+              className="px-3 py-1 border border-slate-300 rounded-md text-sm font-medium text-slate-700 focus:ring-2 focus:ring-blue-500 outline-none max-w-[200px]"
             >
-              {features.map(f => <option key={f} value={f}>{f}</option>)}
+              {allFeatures.map(f => (
+                <option key={f} value={f}>
+                  {f} {features.includes(f) ? '(모델 포함)' : ''}
+                </option>
+              ))}
             </select>
           </div>
         </div>
         
-        <div className="flex items-center gap-2">
-           <span className="text-sm text-slate-500">AI 어시스턴트 활성화</span>
+        <div className="flex items-center gap-3">
+           <button 
+             onClick={onReset}
+             className="px-3 py-1.5 text-xs font-medium text-slate-600 bg-white border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"
+           >
+             모델 변수 변경
+           </button>
+           
+           <div className="h-6 w-px bg-slate-200 mx-1"></div>
+
+           <span className="text-sm text-slate-500">AI 어시스턴트</span>
            <button 
              onClick={() => setShowExplanation(!showExplanation)}
              className={`w-12 h-6 rounded-full p-1 transition-colors duration-200 ease-in-out ${showExplanation ? 'bg-blue-600' : 'bg-slate-300'}`}
@@ -97,26 +126,50 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
             {/* Prediction Card */}
             <div className="bg-slate-850 text-white rounded-xl shadow-lg p-6 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500 opacity-10 rounded-full blur-2xl -mr-16 -mt-16"></div>
-                <h3 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-1">모델 성능</h3>
+                <h3 className="text-sm uppercase tracking-wider text-slate-400 font-semibold mb-1">모델 성능 (선택된 변수 기반)</h3>
                 <div className="flex items-end gap-2 mb-4">
                     <span className="text-4xl font-bold">{(prediction.accuracy * 100).toFixed(1)}%</span>
-                    <span className="text-sm text-blue-400 mb-1">정확도 (Accuracy)</span>
+                    <span className="text-sm text-blue-400 mb-1">
+                      {isRegression ? 'R² (설명력)' : '정확도 (Accuracy)'}
+                    </span>
                 </div>
                 <div className="w-full bg-slate-700 h-2 rounded-full overflow-hidden">
-                    <div className="bg-blue-500 h-full" style={{ width: `${prediction.accuracy * 100}%` }}></div>
+                    <div className="bg-blue-500 h-full" style={{ width: `${Math.max(0, prediction.accuracy * 100)}%` }}></div>
                 </div>
                 <div className="mt-4 flex justify-between text-xs text-slate-400">
-                    <span>AUC: {prediction.auc}</span>
+                    {!isRegression && <span>AUC (추정): {prediction.auc.toFixed(2)}</span>}
+                    {isRegression && <span>설명력(0~1): 1에 가까울수록 좋음</span>}
                     <span>{prediction.modelName}</span>
                 </div>
             </div>
 
             {/* Feature Stats */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
-                 <h3 className="font-semibold text-slate-900 mb-4 flex justify-between">
-                    <span>데이터 품질: {activeFeature}</span>
-                    <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{featureStats.type === 'numeric' ? '수치형' : '범주형'}</span>
-                 </h3>
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative">
+                 <div className="flex justify-between items-center mb-4">
+                   <div className="flex items-center gap-2">
+                     <h3 className="font-semibold text-slate-900">데이터 품질: {activeFeature}</h3>
+                     <div className="relative">
+                       <button 
+                         onMouseEnter={() => setShowQualityTooltip(true)}
+                         onMouseLeave={() => setShowQualityTooltip(false)}
+                         className="text-slate-400 hover:text-blue-500 transition-colors"
+                       >
+                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
+                           <path strokeLinecap="round" strokeLinejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                         </svg>
+                       </button>
+                       {showQualityTooltip && (
+                         <div className="absolute left-0 bottom-6 w-64 bg-slate-800 text-white text-xs p-3 rounded-lg shadow-xl z-10 leading-relaxed">
+                           <p className="mb-1"><strong className="text-blue-300">결측치:</strong> 비어있는 데이터의 개수입니다.</p>
+                           <p className="mb-1"><strong className="text-blue-300">고유값:</strong> 중복을 제외한 데이터의 종류 수입니다.</p>
+                           <p><strong className="text-blue-300">평균:</strong> 데이터의 산술적인 평균값입니다.</p>
+                         </div>
+                       )}
+                     </div>
+                   </div>
+                   <span className="text-xs bg-slate-100 text-slate-500 px-2 py-1 rounded">{featureStats.type === 'numeric' ? '수치형' : '범주형'}</span>
+                 </div>
+                 
                  <div className="space-y-4 text-sm">
                     <div className="flex justify-between py-2 border-b border-slate-50">
                         <span className="text-slate-500">결측치</span>
@@ -180,7 +233,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ data, meta, target, featur
                                 itemStyle={{color: '#fff'}}
                                 cursor={{fill: '#f1f5f9'}}
                             />
-                            <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="count" name="빈도수" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                         </BarChart>
                     </ResponsiveContainer>
                 </div>

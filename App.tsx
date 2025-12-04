@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Layout } from './components/Layout';
 import { FileUploader } from './components/FileUploader';
@@ -87,6 +88,8 @@ function App() {
           <VariableSelector 
             columns={meta.columns} 
             stats={meta.stats} 
+            initialTarget={targetVar}
+            initialFeatures={selectedFeatures}
             onConfirm={handleVariablesConfirmed} 
           />
         )}
@@ -97,6 +100,7 @@ function App() {
             meta={meta}
             target={targetVar}
             features={selectedFeatures}
+            onReset={() => setStep(AppStep.SELECT_VARS)}
           />
         )}
       </div>

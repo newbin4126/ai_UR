@@ -26,7 +26,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </main>
       <footer className="bg-slate-900 text-slate-400 py-12 mt-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} UR Analytics. 안전한 클라이언트 측 데이터 처리.</p>
+          <p>&copy; {new Date().getFullYear()} UR Analytics. team DBDB. AI - final assignment</p>
         </div>
       </footer>
     </div>
